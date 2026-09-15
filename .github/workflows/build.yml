@@ -1,0 +1,59 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android SDK
+        shell: pwsh
+        run: |
+          $sdkManager = Join-Path $env:ANDROID_HOME 'cmdline-tools\latest\bin\sdkmanager.bat'
+          if (!(Test-Path -LiteralPath $sdkManager)) { throw "sdkmanager not found: $sdkManager" }
+          & $sdkManager "platforms;android-35" "build-tools;35.0.0"
+          if ($LASTEXITCODE -ne 0) { throw "Android SDK installation failed: $LASTEXITCODE" }
+      - name: Build
+        shell: pwsh
+        run: ./build.ps1 -Jdk $env:JAVA_HOME -Sdk $env:ANDROID_HOME -OutputApk "$PWD/KPA-Assistant.apk"
+      - name: Set build name
+        shell: pwsh
+        run: |
+          $stamp = (Get-Date).ToUniversalTime().AddHours(8).ToString('yyyyMMddHHmm')
+          "APK_NAME=KPA-Tools-$env:GITHUB_REF_NAME-$stamp.apk" >> $env:GITHUB_ENV
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.APK_NAME }}
+          path: KPA-Assistant.apk
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $asset = $env:APK_NAME
+          Copy-Item -LiteralPath 'KPA-Assistant.apk' -Destination $asset
+          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $asset --clobber --repo $env:GITHUB_REPOSITORY
+            $oldAssets = gh release view $tag --repo $env:GITHUB_REPOSITORY --json assets --jq '.assets[].name'
+            foreach ($old in $oldAssets) {
+              if ($old -like '*.apk' -and $old -ne $asset) { gh release delete-asset $tag $old -y --repo $env:GITHUB_REPOSITORY }
+            }
+          } else {
+            gh release create $tag $asset --title "KPA助手 $($tag.TrimStart('v'))" --generate-notes --latest --repo $env:GITHUB_REPOSITORY
+          }

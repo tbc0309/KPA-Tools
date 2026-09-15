@@ -1,0 +1,20 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.imnks.kpatools" android:versionCode="1" android:versionName="1.0.0">
+ <uses-sdk android:minSdkVersion="30" android:targetSdkVersion="35"/>
+ <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+ <uses-permission android:name="android.permission.WAKE_LOCK"/>
+ <queries>
+  <package android:name="org.pegasus_frontend.android"/><package android:name="com.retroarch.aarch64"/>
+  <package android:name="com.dsemu.drastic"/><package android:name="org.ppsspp.ppsspp"/>
+  <package android:name="xyz.aethersx2.android"/><package android:name="org.citra.emu"/>
+  <package android:name="org.mupen64plusae.v3.fzurita.pro"/><package android:name="org.dolphinemu.mmjr"/>
+  <package android:name="com.ayaneo.home"/>
+  <package android:name="bin.mt.plus"/>
+ </queries>
+ <application android:label="KPA助手" android:icon="@drawable/ic_launcher" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:requestLegacyExternalStorage="false">
+  <meta-data android:name="developer" android:value="我不是矿神"/><meta-data android:name="website" android:value="https://imnks.com"/>
+  <activity android:name="cn.pegasus.setup.MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden" android:screenOrientation="unspecified">
+   <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+  </activity>
+ <activity android:name="cn.pegasus.setup.TutorialActivity" android:exported="false" android:screenOrientation="landscape" />
+ </application>
+</manifest>

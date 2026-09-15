@@ -1,0 +1,7 @@
+build/
+*.apk
+*.idsig
+*.p12
+.idea/
+.vscode/
+local.properties
