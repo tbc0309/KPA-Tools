@@ -17,13 +17,9 @@ public final class ConfigAudit {
    if(!app.supportsConfig)continue;try{c.getPackageManager().getPackageInfo(app.pkg,0);}catch(Exception e){result.put(app.pkg,"现有配置：应用未安装");continue;}
    String rel=relative(app.pkg);
    if(rel==null){result.put(app.pkg,"现有配置：暂无检测路径，尚未核对");continue;}
-   File f=new File(SetupEngine.HOME,rel);String hash="";
-   if(f.isFile()&&f.canRead())hash=SetupEngine.md5(f);
-   else {result.put(app.pkg,"现有配置：无法直接读取，正式执行时处理");continue;}
-   if(hash.equals("MISSING")||hash.isEmpty()){result.put(app.pkg,"现有配置：未检出，正式执行时导入定制配置");continue;}
-   File imported=source==null?null:new File(source,"【2】覆盖安卓文件夹/"+rel);
-   if(imported!=null&&imported.isFile()&&SetupEngine.md5(imported).equalsIgnoreCase(hash))result.put(app.pkg,"现有配置：已匹配定制配置");
-   else result.put(app.pkg,"现有配置：已有文件，执行时按所选资料覆盖");
+   File f=new File(SetupEngine.HOME,rel);
+   if(!f.isFile()||!f.canRead()){result.put(app.pkg,"现有配置：无法直接读取，正式执行时处理");continue;}
+   result.put(app.pkg,"现有配置：已有文件，执行时按所选资料覆盖");
   }return result;
  }
 }
