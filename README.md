@@ -1,5 +1,7 @@
 # KPA助手
 
+[English](README.en.md) | [简体中文](README.md)
+
 KPA助手用于 KONKR Pocket Advance 掌机的一次性初始化。它可以自动识别资料目录与可选的 GBA 整合包，安装或覆盖天马G、RetroArch、常用独立模拟器和 MT 文件管理器，并按资料包顺序覆盖配置、游戏列表与 Android 目录。
 
 资料页可选择游戏存储位置。选择 TF 卡时，仅将 `Roms` 游戏内容和最终游戏列表写入 TF 卡；`Android/data`、RetroArch、模拟器配置与 `pegasus-frontend` 仍保留在内部存储。配置资料文件夹和 GBA ZIP 可从内部存储或 TF 卡读取。
