@@ -10,7 +10,7 @@
   <package android:name="com.ayaneo.home"/>
   <package android:name="bin.mt.plus"/>
  </queries>
- <application android:label="KPA助手" android:icon="@drawable/ic_launcher" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:requestLegacyExternalStorage="false">
+ <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:requestLegacyExternalStorage="false">
   <meta-data android:name="developer" android:value="我不是矿神"/><meta-data android:name="website" android:value="https://imnks.com"/>
   <activity android:name="cn.pegasus.setup.MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden" android:screenOrientation="unspecified">
    <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
