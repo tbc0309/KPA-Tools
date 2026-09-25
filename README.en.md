@@ -31,17 +31,13 @@ The result has three states: green means every verification passed; yellow means
 
 ## Interface
 
-| 1 Authorization | 2 Source |
+| 1 Authorization | 2 Sources |
 | --- | --- |
-| ![Authorization](docs/screenshots/01-授权.png) | ![Source](docs/screenshots/02-资料.png) |
+| ![Authorization](docs/screenshots/en/01-authorization.png) | ![Sources](docs/screenshots/en/02-sources.png) |
 
-| 3 Execution | 4 Progress |
+| 3 Execution | About |
 | --- | --- |
-| ![Execution](docs/screenshots/03-执行.png) | ![Progress](docs/screenshots/04-执行状态-v1.0.1.png) |
-
-| About |
-| --- |
-| ![About](docs/screenshots/05-关于.png) |
+| ![Execution](docs/screenshots/en/03-execution.png) | ![About](docs/screenshots/en/05-about.png) |
 
 ## Compatibility
 
