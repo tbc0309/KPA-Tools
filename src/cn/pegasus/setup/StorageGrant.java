@@ -16,11 +16,4 @@ public final class StorageGrant {
    " n=0; allowed=0; while [ $n -lt 8 ]; do cmd appops set --uid "+q+" MANAGE_EXTERNAL_STORAGE allow >/dev/null 2>&1 || true; cmd appops get "+q+" MANAGE_EXTERNAL_STORAGE 2>/dev/null | grep -F allow >/dev/null && { allowed=1; break; }; n=$((n+1)); sleep 1; done\n"+
    " [ $allowed -eq 1 ] && echo 'All-files permission granted' || echo 'All-files permission requires manual confirmation'\nfi\n";
  }
- public static File create(Context context,AppSpec[] apps)throws Exception {
-  StringBuilder s=new StringBuilder("#!/system/bin/sh\n[ \"$(id -u)\" = 0 ] || { echo 'Run through handheld storage Root'; exit 1; }\n");
-  s.append("exec > ").append(RootBridge.q(SetupEngine.HOME+"/KPA_Storage_Result.txt")).append(" 2>&1\n");
-  s.append(commands(context.getPackageName()));
-  for(AppSpec a:apps)try{context.getPackageManager().getPackageInfo(a.pkg,0);s.append(commands(a.pkg));}catch(Exception ignored){}
-  s.append("echo STORAGE_SCRIPT_DONE\n");File file=new File(SetupEngine.HOME,"KPA_Storage.sh");SetupEngine.write(file,s.toString());return file;
- }
 }

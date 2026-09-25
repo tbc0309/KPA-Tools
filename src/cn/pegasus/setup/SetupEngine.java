@@ -96,7 +96,7 @@ public final class SetupEngine {
   writeLayer("lists",listItems,offset,total);offset+=listItems.size();
   writeLayer("android",androidItems,offset,total);
  }
- void writeLayer(String name,Map<String,Item> items,int offset,int total)throws Exception{File dir=new File(run,"ordered/"+name);if(!dir.isDirectory()&&!dir.mkdirs())throw new IOException("无法创建分步脚本目录："+name);BulkLayerWriter.write(dir,items,Collections.emptyMap(),offset,Math.max(1,total));}
+ void writeLayer(String name,Map<String,Item> items,int offset,int total)throws Exception{File dir=new File(run,"ordered/"+name);if(!dir.isDirectory()&&!dir.mkdirs())throw new IOException("无法创建分步脚本目录："+name);BulkLayerWriter.write(dir,items,offset,Math.max(1,total));}
  static String restoreLabel(String dir){String base=dir.substring(0,dir.lastIndexOf('/'));return "restorecon -RF "+RootBridge.q(dir)+"\nlabel=$(ls -Zd "+RootBridge.q(base)+" | awk '{print $1}')\ncase \"$label\" in *:app_data_file:*|*:privapp_data_file:*) ;; *) echo 'Unexpected application security label'; exit 1;; esac\nchcon -R \"$label\" "+RootBridge.q(dir)+"\n";}
  void createBootstrap() throws Exception {
   String status=RootBridge.q(new File(run,SetupEngine.STATUS).getAbsolutePath());

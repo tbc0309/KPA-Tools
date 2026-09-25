@@ -11,7 +11,7 @@ public final class ConfigAudit {
   if(pkg.equals("org.dolphinemu.mmjr"))return "mmjr2-vbi/Config/Dolphin.ini";
   return null;
  }
- public static Map<String,String> inspect(Context c,File source,AppSpec[] apps)throws Exception {
+ public static Map<String,String> inspect(Context c,AppSpec[] apps)throws Exception {
   LinkedHashMap<String,String> result=new LinkedHashMap<>();
   for(AppSpec app:apps){
    if(!app.supportsConfig)continue;try{c.getPackageManager().getPackageInfo(app.pkg,0);}catch(Exception e){result.put(app.pkg,"现有配置：应用未安装");continue;}

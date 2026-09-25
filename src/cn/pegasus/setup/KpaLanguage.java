@@ -38,8 +38,8 @@ final class KpaLanguage {
   put("请先授予文件权限","Grant file access first"); put("授权后会自动生成 KPA_Authorize.sh","KPA_Authorize.sh will be created automatically"); put("掌机管理 → Root 脚本 → 运行 KPA_Authorize.sh","Device Manager → Root Script → run KPA_Authorize.sh"); put("执行结果页面下滑到最后，出现 SUCCESS 后返回 KPA助手","Scroll to SUCCESS, then return to KPA Assistant"); put("授权通过，可以继续","Authorization passed. You can continue.");
   put("选择教程查看设置说明","Open a guide for setup instructions"); put("资料不完整，请补选标红项目","Sources incomplete. Complete highlighted items."); put("资料完整，可以继续","Sources ready. You can continue."); put("正在检测资料","Checking sources"); put("等待自动识别资料","Waiting for automatic source detection");
   put("正在初始化 · 请保持本页","Initializing · Keep this page open"); put("检查无误后确认执行","Review and start initialization"); put("点击执行日志查看","Open the run log for details");
-  put("款安装"," apps selected"); put("游戏与列表","Games and lists"); put("内部存储","Internal storage"); put("TF卡","SD card"); put("存储选择","Storage");
-  put("资料与应用检测通过","Sources and apps passed"); put("资料检测通过后才能继续","Complete the source check before continuing"); put("资料检测失败：","Source check failed: "); put("资料自动识别完成","Sources detected automatically");
+  put("款安装"," apps selected"); put(" 款"," apps"); put("游戏与列表","Games and lists"); put("内部存储可用 ","Internal storage · Available "); put("TF卡可用 ","SD card · Available "); put("内部存储","Internal storage"); put("TF卡","SD card"); put("存储选择","Storage"); put("未选GBA","GBA not selected");
+  put("资料检测通过，本次跳过 GBA整包","Source check passed · GBA bundle skipped"); put("资料与应用检测通过","Sources and apps passed"); put("资料检测通过后才能继续","Complete the source check before continuing"); put("资料检测失败：","Source check failed: "); put("资料自动识别完成","Sources detected automatically");
   put("未找到资料目录，请手动选择","Source folder not found. Select it manually."); put("发现多个资料目录，请手动确认","Multiple source folders found. Select one manually."); put("发现多个 GBA整包，请手动确认","Multiple GBA bundles found. Select one manually.");
   put("请选择完整资料文件夹","Select a complete source folder"); put("请选择 ZIP 文件","Select a ZIP file"); put("缺少有效安卓覆盖配置，请补选","Valid Android overlay is missing"); put("未找到定制主配置 ZIP，请在导入选项选择","Custom settings ZIP is missing"); put("主配置缺少天马G或 RA 配置，请补选","Custom settings must contain Pegasus G or RA settings");
   put("所选 ZIP 内未识别到 GBA 游戏和列表结构","The selected ZIP does not contain a recognized GBA games/list structure"); put("缺少安装包：","Missing APK: "); put("安装包不属于所选软件","The APK does not match this app");
@@ -69,17 +69,57 @@ final class KpaLanguage {
   put("现有配置：应用未安装","Existing settings: app not installed"); put("现有配置：暂无检测路径，尚未核对","Existing settings: no check path"); put("现有配置：无法直接读取，正式执行时处理","Existing settings: checked during initialization"); put("现有配置：已有文件，执行时按所选资料覆盖","Existing settings: will be replaced by selected sources");
   put("提醒数量：","Notices: "); put("核验文件：","Verified files: "); put("执行状态：","Status: "); put("成功","Success"); put("完成","Complete");
   put("教程来源：","Guide source: "); put("教程读取失败：","Unable to read guide: "); put("关闭教程","Close guide");
+  put("TF 卡可用 ","SD card · Available "); put("TF 卡","SD card");
+  put("请运行 KPA_Authorize.sh","Run KPA_Authorize.sh");
+  put("（仅导入文件，不计应用安装大小）"," (imported files only)");
+  put("RA 初始化：自动启动并等待 base.apk 完成","RA: launch and wait for base.apk extraction");
+  put("GBA整包已归档：","GBA archive renamed: "); put("已覆盖：","Imported: ");
+  put("初始化完成，请返回 KPA助手","Completed. Return to KPA Assistant.");
+  put("初始化失败，请返回查看日志","Initialization failed. Return to view the log.");
+  put("初始化已完成","Initialization complete"); put("请在掌机管理的 Root 脚本页运行","Run from Device Manager → Root Script");
+  put("执行中断，代码","Stopped, code "); put("临时文件冲突","Temporary path conflict");
+  put("：通过",": OK"); put("核验未通过明细：","Verification failures: ");
+  put("初始化失败，请检查执行日志","Initialization failed. Check the run log.");
+  put("正在初始化，请等待当前步骤完成","Initialization is running. Please wait.");
+  put("步骤未完成","Step failed"); put("执行日志已保留，请检查失败原因。","The run log has been saved. Check it for details.");
+  put("本次检查","Current check"); put("等待资料检测","Waiting for source check"); put("执行准备","Preparing run"); put("等待确认","Waiting for confirmation");
+  put("等待操作。","Waiting"); put("无详细记录","No details available");
+  put("存在文件错误，已继续执行"," encountered file errors; continuing");
+  put("安装失败，已继续执行","install failed; continuing");
+  put("导入 GBA 必须选择天马G与 RA 的配置","Select Pegasus G and RA settings to import GBA");
+  put(" 安装包"," APK"); put("请勾选安装 ","Select install for "); put("，或取消导入配置"," or deselect its settings");
+  put("未找到内容匹配的资料，请选择补全","No matching sources found. Select manually.");
+  put("发现多个内容匹配的资料，请手动确认","Multiple matching sources found. Select one.");
+  put("GBA整包：未选择，本次跳过","GBA bundle not selected; skipped");
+  put("GBA整包：空间不足，本次仅安装应用与覆盖配置","Not enough space for GBA; installing apps and settings only");
+  put("最终游戏列表：已准备 ","Final game lists: prepared "); put(" 个覆盖文件"," overlay files");
+  put("最终游戏列表：未找到可覆盖文件","Final game lists: no overlay files found");
+  put("RA 初始化：安装后自动启动并等待资源释放","RA: launch after install and wait for extraction");
+  put("正在通过存储 Root 执行初始化","Initializing through Storage Root");
+  put("。请在掌机设置的 Root 脚本入口运行一次，然后返回读取结果。",". Run it from Device Manager → Root Script, then return.");
+  put("已生成 ","Created "); put("安装应用：","Installing app: ");
+  put(" 款安装"," apps selected"); put("定制✓","Custom ✓"); put("安卓✓","Android ✓"); put("列表✓","Lists ✓"); put("定制缺少","Custom ✕"); put("安卓缺少","Android ✕"); put("列表缺少","Lists ✕");
   put("失败","failed"); put("跳过","Skipped"); put("正在","In progress: "); put("准备","Preparing"); put("清理","Cleaning"); put("安装应用：","Installing app: "); put("覆盖","Applying"); put("检查","Checking"); put("核验中","Verifying");
  }
  private static void put(String zh,String en){TEXT.put(zh,en);}
  static boolean isEnglish(Context context){android.content.SharedPreferences prefs=context.getSharedPreferences("kpa-language",0);if(prefs.getBoolean(MANUAL,false))return prefs.getBoolean(ENGLISH,false);return !"zh".equalsIgnoreCase(Locale.getDefault().getLanguage());}
  static void toggle(Context context){boolean next=!isEnglish(context);context.getSharedPreferences("kpa-language",0).edit().putBoolean(MANUAL,true).putBoolean(ENGLISH,next).apply();}
  static String text(Context context,String value){return isEnglish(context)?english(value):value;}
+ private static final java.util.regex.Pattern TOKENS=translationPattern();
+ private static java.util.regex.Pattern translationPattern(){
+  java.util.ArrayList<String> keys=new java.util.ArrayList<>(TEXT.keySet());
+  java.util.Collections.sort(keys,(a,b)->Integer.compare(b.length(),a.length()));
+  StringBuilder pattern=new StringBuilder();
+  for(String key:keys){if(pattern.length()>0)pattern.append('|');pattern.append(java.util.regex.Pattern.quote(key));}
+  return java.util.regex.Pattern.compile(pattern.toString());
+ }
  static String english(String value){
   if(value==null||value.isEmpty())return value;
   if(TEXT.containsKey(value))return TEXT.get(value);
-  java.util.ArrayList<Map.Entry<String,String>> entries=new java.util.ArrayList<>(TEXT.entrySet());
-  java.util.Collections.sort(entries,(a,b)->Integer.compare(b.getKey().length(),a.getKey().length()));
-  String out=value;for(Map.Entry<String,String> entry:entries)out=out.replace(entry.getKey(),entry.getValue());return out;
+  // Translate each source phrase once; never feed translated text back into the dictionary.
+  java.util.regex.Matcher matcher=TOKENS.matcher(value);
+  StringBuffer out=new StringBuffer();
+  while(matcher.find())matcher.appendReplacement(out,java.util.regex.Matcher.quoteReplacement(TEXT.get(matcher.group())));
+  matcher.appendTail(out);return out.toString();
  }
 }
