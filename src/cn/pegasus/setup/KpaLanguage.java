@@ -12,6 +12,7 @@ final class KpaLanguage {
   put("KPA助手","KPA Assistant"); put("授权","Authorize"); put("资料","Sources"); put("执行","Run"); put("关于","About");
   put("设备授权","Device access"); put("设备型号","Device model"); put("未知机型，谨慎使用！","Unknown device — use with caution!");
   put("文件权限","File access"); put("存储 Root","Storage Root"); put("已授权","Granted"); put("待授权","Required"); put("已通过","Passed"); put("待执行","Pending");
+  put("完整 Root","Full Root"); put("Root 权限","Root access"); put("请求中","Requesting");
   put("启动检查","Startup check"); put("掌机管理","Device Manager"); put("下一步","Next"); put("返回","Back"); put("关闭","Close"); put("取消","Cancel"); put("确认","Confirm"); put("完成","Done");
   put("资料检测","Source check"); put("资料目录","Source folder"); put("GBA整包","GBA bundle"); put("未选择 · 可选","Not selected · Optional");
   put("安装配置","Install setup"); put("Roms存储","ROM storage"); put("自动检测","Auto detection"); put("正在搜索资料","Searching for sources"); put("正在核对内容","Checking contents");
@@ -36,6 +37,7 @@ final class KpaLanguage {
   put("访问被拒绝","Access denied"); put("存储空间不足","Not enough storage"); put("文件不存在","File not found"); put("路径不安全","Unsafe path"); put("应用目录权限异常","Invalid app folder permissions"); put("RA 资源释放完成","RA resources initialized"); put("RA 资源释放超时","RA resource initialization timed out"); put("无法读取 RA 版本","Unable to read RA version");
   put("设备→Root 脚本：运行 KPA_Authorize.sh","Device → Root Script: run KPA_Authorize.sh");
   put("请先授予文件权限","Grant file access first"); put("授权后会自动生成 KPA_Authorize.sh","KPA_Authorize.sh will be created automatically"); put("掌机管理 → Root 脚本 → 运行 KPA_Authorize.sh","Device Manager → Root Script → run KPA_Authorize.sh"); put("执行结果页面下滑到最后，出现 SUCCESS 后返回 KPA助手","Scroll to SUCCESS, then return to KPA Assistant"); put("授权通过，可以继续","Authorization passed. You can continue.");
+  put("正在请求完整 Root 权限","Requesting Full Root access");
   put("选择教程查看设置说明","Open a guide for setup instructions"); put("资料不完整，请补选标红项目","Sources incomplete. Complete highlighted items."); put("资料完整，可以继续","Sources ready. You can continue."); put("正在检测资料","Checking sources"); put("等待自动识别资料","Waiting for automatic source detection");
   put("正在初始化 · 请保持本页","Initializing · Keep this page open"); put("检查无误后确认执行","Review and start initialization"); put("点击执行日志查看","Open the run log for details");
   put("款安装"," apps selected"); put(" 款"," apps"); put("游戏与列表","Games and lists"); put("内部存储可用 ","Internal storage · Available "); put("TF卡可用 ","SD card · Available "); put("内部存储","Internal storage"); put("TF卡","SD card"); put("存储选择","Storage"); put("未选GBA","GBA not selected");

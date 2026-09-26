@@ -1,18 +1,29 @@
 package cn.pegasus.setup;
 
 import android.content.Context;
+import java.io.*;
 import java.lang.reflect.*;
 
 /** 调用掌机系统提供的存储 Root 接口。 */
 public final class RootBridge {
  private final Object manager;
  private final Method runner;
+ private final String su;
  public RootBridge(Context context) throws Exception {
+  su=findSu();
   manager=context.getSystemService("custom_function");
-  if(manager==null) throw new Exception("当前系统没有可直接调用的存储 Root 接口，请使用掌机设置的 Root 脚本入口");
-  runner=manager.getClass().getMethod("runShellScriptWithRootPermissionForResult",String.class);
+  runner=manager==null?null:manager.getClass().getMethod("runShellScriptWithRootPermissionForResult",String.class);
+  if(su==null&&runner==null) throw new Exception("当前系统没有可直接调用的存储 Root 接口，请使用掌机设置的 Root 脚本入口");
  }
+ static String findSu(){
+  for(String path:new String[]{"/system_ext/bin/su","/system/bin/su","/system/xbin/su","/sbin/su"})if(new File(path).canExecute())return path;
+  return null;
+ }
+ public boolean usesFullRoot(){return su!=null;}
  public String call(String command) throws Exception {
+  if(su!=null){
+   Process process=new ProcessBuilder(su,"-c",command).redirectErrorStream(true).start();StringBuilder output=new StringBuilder();try(BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()))){String line;while((line=reader.readLine())!=null)output.append(line).append('\n');}int code=process.waitFor();if(code==0)return output.toString();if(runner==null)throw new Exception("完整 Root 请求被拒绝或执行失败（"+code+"）："+output.toString().trim());
+  }
   try {Object value=runner.invoke(manager,command); return value==null?"":value.toString();}
   catch(InvocationTargetException e){throw new Exception("存储 Root 接口拒绝调用："+e.getCause(),e.getCause());}
  }
