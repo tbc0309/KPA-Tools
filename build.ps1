@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Jdk,[Parameter(Mandatory=$true)][string]$Sdk,[string]$WorkDirectory,[string]$OutputApk)
+param([Parameter(Mandatory=$true)][string]$Jdk,[Parameter(Mandatory=$true)][string]$Sdk,[string]$WorkDirectory,[string]$OutputApk,[string]$SigningKey,[string]$SigningStorePassword='pegasus-local',[string]$SigningAlias='pegasus')
 $ErrorActionPreference='Stop'
 if(!$WorkDirectory){$WorkDirectory=Join-Path $PSScriptRoot 'build'}
 if(!$OutputApk){$OutputApk=Join-Path (Split-Path $PSScriptRoot) 'KPA助手.apk'}
@@ -35,12 +35,13 @@ Push-Location $dex
 try {& (Join-Path $tools 'aapt.exe') add (Join-Path $WorkDirectory 'unsigned.apk') classes.dex;CheckExit} finally {Pop-Location}
 & (Join-Path $tools 'zipalign.exe') -f 4 (Join-Path $WorkDirectory 'unsigned.apk') (Join-Path $WorkDirectory 'aligned.apk')
 CheckExit
-$key=Join-Path $WorkDirectory 'local-signing.p12'
+$key=if($SigningKey){$SigningKey}else{Join-Path $WorkDirectory 'local-signing.p12'}
 if(!(Test-Path -LiteralPath $key)){
+ if($SigningKey){throw "缺少指定签名文件：$SigningKey"}
  & (Join-Path $Jdk 'bin\keytool.exe') -genkeypair -keystore $key -storepass pegasus-local -keypass pegasus-local -alias pegasus -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=PegasusG Setup Local Build'
  CheckExit
 }
-& (Join-Path $Jdk 'bin\java.exe') -jar (Join-Path $tools 'lib\apksigner.jar') sign --ks $key --ks-pass pass:pegasus-local --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --out $OutputApk (Join-Path $WorkDirectory 'aligned.apk')
+& (Join-Path $Jdk 'bin\java.exe') -jar (Join-Path $tools 'lib\apksigner.jar') sign --ks $key --ks-pass "pass:$SigningStorePassword" --ks-key-alias $SigningAlias --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --out $OutputApk (Join-Path $WorkDirectory 'aligned.apk')
 CheckExit
 & (Join-Path $Jdk 'bin\java.exe') -jar (Join-Path $tools 'lib\apksigner.jar') verify --verbose $OutputApk
 CheckExit

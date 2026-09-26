@@ -27,7 +27,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Android SDK installation failed: $LASTEXITCODE" }
       - name: Build
         shell: pwsh
-        run: ./build.ps1 -Jdk $env:JAVA_HOME -Sdk $env:ANDROID_HOME -OutputApk "$PWD/KPA-Assistant.apk"
+        env:
+          KPA_SIGNING_KEY_BASE64: ${{ secrets.KPA_SIGNING_KEY_BASE64 }}
+          KPA_SIGNING_STORE_PASSWORD: ${{ secrets.KPA_SIGNING_STORE_PASSWORD }}
+          KPA_SIGNING_ALIAS: ${{ secrets.KPA_SIGNING_ALIAS }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:KPA_SIGNING_KEY_BASE64)) { throw 'KPA signing key is not configured' }
+          $signingKey = Join-Path $env:RUNNER_TEMP 'kpa-signing.p12'
+          [IO.File]::WriteAllBytes($signingKey, [Convert]::FromBase64String($env:KPA_SIGNING_KEY_BASE64))
+          ./build.ps1 -Jdk $env:JAVA_HOME -Sdk $env:ANDROID_HOME -OutputApk "$PWD/KPA-Assistant.apk" -SigningKey $signingKey -SigningStorePassword $env:KPA_SIGNING_STORE_PASSWORD -SigningAlias $env:KPA_SIGNING_ALIAS
       - name: Set build name
         shell: pwsh
         run: |
