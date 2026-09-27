@@ -20,9 +20,21 @@ public final class RootBridge {
   return null;
  }
  public boolean usesFullRoot(){return su!=null;}
+ /** Verify su authorization without falling back to the vendor storage API. */
+ public void checkFullRoot() throws Exception {
+  if(su==null)throw new Exception("完整 Root 不可用");
+  Process process=new ProcessBuilder(su,"-c","id -u").redirectErrorStream(true).start();
+  try {
+   if(!process.waitFor(30,java.util.concurrent.TimeUnit.SECONDS))throw new Exception("Root 操作超时");
+   try(BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()))){
+    if(process.exitValue()!=0||!"0".equals(reader.readLine()))throw new Exception("Root 请求被拒绝");
+   }
+  } finally {process.destroy();}
+ }
  public String call(String command) throws Exception {
   if(su!=null){
-   Process process=new ProcessBuilder(su,"-c",command).redirectErrorStream(true).start();StringBuilder output=new StringBuilder();try(BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()))){String line;while((line=reader.readLine())!=null)output.append(line).append('\n');}int code=process.waitFor();if(code==0)return output.toString();if(runner==null)throw new Exception("完整 Root 请求被拒绝或执行失败（"+code+"）："+output.toString().trim());
+   // A failed command may already have made changes; never replay it via another backend.
+   Process process=new ProcessBuilder(su,"-c",command).redirectErrorStream(true).start();StringBuilder output=new StringBuilder();try(BufferedReader reader=new BufferedReader(new InputStreamReader(process.getInputStream()))){String line;while((line=reader.readLine())!=null)output.append(line).append('\n');}int code=process.waitFor();if(code==0)return output.toString();throw new Exception("完整 Root 请求被拒绝或执行失败（"+code+"）："+output.toString().trim());
   }
   try {Object value=runner.invoke(manager,command); return value==null?"":value.toString();}
   catch(InvocationTargetException e){throw new Exception("存储 Root 接口拒绝调用："+e.getCause(),e.getCause());}

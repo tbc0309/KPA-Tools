@@ -52,6 +52,7 @@ public final class SetupEngine {
   File lists=sources.lists!=null?sources.lists:new File(config,"【3】覆盖游戏列表（装好游戏后覆盖）");
   if(new File(lists,"Roms").isDirectory())lists=new File(lists,"Roms");
   activeLayer="lists";int finalListFiles=0;if(lists.isDirectory()){File[] ds=lists.listFiles();if(ds!=null)for(File d:ds)if(d.isDirectory()){int before=listItems.size();overlay(d,"Roms/"+d.getName());finalListFiles+=listItems.size()-before;}}log.line(finalListFiles>0?"最终游戏列表：已准备 "+finalListFiles+" 个覆盖文件":"最终游戏列表：未找到可覆盖文件");
+  if(enabled("org.pegasus_frontend.android")){
   File settings=new File(stage,"device-template.txt");
   try(InputStream in=context.getAssets().open("templates/pegasus-frontend/settings.txt");OutputStream out=new FileOutputStream(settings)){copy(in,out);}
   String text=read(settings);write(settings,text);
@@ -66,6 +67,7 @@ public final class SetupEngine {
   write(dirs,String.join("\n",collections)+"\n");
   put(dirs,HOME+"/pegasus-frontend/game_dirs.txt");
   put(dirs,HOME+"/Android/data/org.pegasus_frontend.android/files/pegasus-frontend/game_dirs.txt");
+  }
   log.line("RA 初始化：安装后自动启动并等待资源释放");
   long bytes=0;for(Item item:items.values())bytes+=item.size;
   try(android.util.JsonWriter w=new android.util.JsonWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(run,"plan.json")),StandardCharsets.UTF_8)))){
@@ -110,7 +112,7 @@ public final class SetupEngine {
   StringBuilder checks=new StringBuilder();for(String path:checked)checks.append(path).append('\n');File checkList=new File(run,"prepared-source.exists");write(checkList,checks.toString());
   s.append("missing=0\nwhile IFS= read -r path; do [ -f \"$path\" ] || missing=1; done < ").append(RootBridge.q(checkList.getAbsolutePath())).append("\n[ $missing -eq 0 ]\n");
   s.append("# Clear only the selected applications' old configuration directories.\necho CLEAN_APPS > ").append(status).append("\n");
-  for(AppSpec a:apps)if(a.install||a.configure){
+  for(AppSpec a:apps)if(a.configure){
    s.append("am force-stop ").append(RootBridge.q(a.pkg)).append(" >/dev/null 2>&1 || true\necho ").append(RootBridge.q("Cleaning old data: "+a.pkg)).append('\n');
    if(a.install&&a.pkg.equals("com.retroarch.aarch64"))s.append("if pm path com.retroarch.aarch64 >/dev/null 2>&1; then n=0; cleared=0; while [ $n -lt 10 ]; do pm clear com.retroarch.aarch64 >/dev/null 2>&1 && { cleared=1; break; }; am force-stop com.google.android.packageinstaller >/dev/null 2>&1 || true; am force-stop com.android.vending >/dev/null 2>&1 || true; n=$((n+1)); sleep 2; done; [ $cleared -eq 1 ] || { echo 'Unable to clear RetroArch data'; exit 1; }; fi\n");
    for(String path:resetPaths(a.pkg))s.append("rm -rf -- ").append(RootBridge.q(path)).append('\n');
@@ -122,7 +124,9 @@ public final class SetupEngine {
   s.append("# Import the selected game bundle, then overwrite it with the guide's final Roms lists.\n");
   if(includeGba)appendLayer(s,status,"GBA","Applying GBA package","gba",false);
   appendLayer(s,status,"LISTS","Applying game lists: "+listItems.size()+" files","lists",false);
-  if(ra!=null&&(ra.install||ra.configure)){appendInstall(s,status,ra,true);if(sources.grantStorage)s.append(StorageGrant.commands(ra.pkg));
+  appendInstall(s,status,ra,true);
+  if(ra!=null&&(ra.install||ra.configure)&&sources.grantStorage)s.append(StorageGrant.commands(ra.pkg));
+  if(ra!=null&&ra.configure){
    s.append("# Launch RetroArch and wait for this version's base.apk extraction to complete.\n");
    String cfg=HOME+"/Android/data/com.retroarch.aarch64/files/retroarch.cfg";
     s.append("echo RA_FIRST_LAUNCH > ").append(status).append("\nmkdir -p ").append(RootBridge.q(new File(cfg).getParent())).append("\nrm -f ").append(RootBridge.q(cfg)).append("\nfor perm in android.permission.READ_EXTERNAL_STORAGE android.permission.WRITE_EXTERNAL_STORAGE; do n=0; while [ $n -lt 10 ]; do pm grant com.retroarch.aarch64 \"$perm\" >/dev/null 2>&1 || true; dumpsys package com.retroarch.aarch64 | grep -F \"$perm: granted=true\" >/dev/null && break; n=$((n+1)); sleep 1; done; [ $n -lt 10 ] || { echo \"RetroArch permission failed: $perm\"; exit 1; }; done\nmonkey -p com.retroarch.aarch64 1 >/dev/null 2>&1 || true\nstarted=$(date +%s)\nn=0\nwhile [ $n -lt 30 ]; do\n  last=$(sed -n 's/^bundle_assets_extract_last_version[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' ").append(RootBridge.q(cfg)).append(" 2>/dev/null | tail -n 1)\n  current=$(sed -n 's/^bundle_assets_extract_version_current[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' ").append(RootBridge.q(cfg)).append(" 2>/dev/null | tail -n 1)\n  elapsed=$(($(date +%s)-started))\n  [ $elapsed -ge 15 ] && [ -n \"$current\" ] && [ \"$last\" = \"$current\" ] && break\n  n=$((n+1))\n  sleep 2\ndone\n[ $n -lt 30 ] || { echo 'RetroArch base.apk extraction timed out'; exit 1; }\nam force-stop com.retroarch.aarch64 >/dev/null 2>&1 || true\nam start --user 0 -n com.imnks.kpatools/cn.pegasus.setup.MainActivity >/dev/null 2>&1 || true\necho 'RetroArch base.apk extraction completed'\n");
@@ -157,7 +161,7 @@ public final class SetupEngine {
    if(rel.startsWith("PG_Android/"))rel=rel.substring(11);
    if(!rel.startsWith("Android/")||skip(rel))continue;String t=target(rel,false);if(t==null)continue;
    File f=new File(stage,"android/"+rel);unzip(z,e,f);sanitize(f,rel);put(f,t);count++;
-  }}if(count==0)throw new IOException("所选 Android 覆盖包没有找到已勾选应用的 Android 配置，请选择 KPA 专用覆盖包");
+  }}if(count==0&&(enabled("org.pegasus_frontend.android")||enabled("com.retroarch.aarch64")))throw new IOException("所选 Android 覆盖包没有找到已勾选应用的 Android 配置，请选择 KPA 专用覆盖包");
  }
  static boolean configFile(String rel){String s=rel.toLowerCase(Locale.ROOT);if(s.startsWith("roms/"))return s.endsWith("/metadata.pegasus.txt");return s.endsWith(".cfg")||s.endsWith(".ini")||s.endsWith("settings.txt")||s.endsWith("game_dirs.txt");}
  void extract(File zip,boolean games) throws Exception {

@@ -1,61 +1,90 @@
 # KPA Tools
 
-[English](README.en.md) | [简体中文](README.md)
+[简体中文](README.md) | [English](README.en.md)
 
-KPA Tools is a one-time setup assistant for the KONKR Pocket Advance handheld. It automatically discovers the configuration source and an optional GBA bundle, installs or replaces Pegasus G, RetroArch, commonly used standalone emulators, and MT Manager, then applies configuration files, game lists, and Android directory overlays in the required order.
+KPA Tools is a setup and maintenance utility for the KONKR Pocket Advance. It imports Pegasus G content, installs applications, organizes configurations, and guides essential device setup. Standard and Root editions use the same package name, signing key, and version, so either edition can replace the other.
 
-The source page lets you choose where games are stored. When the TF card is selected, only the `Roms` game content and final game lists are written to the card. `Android/data`, RetroArch, emulator configuration, and `pegasus-frontend` remain in internal storage. The configuration source folder and GBA ZIP can be read from either internal storage or the TF card.
+## Choose an edition
 
-Before running the setup, grant **All files access** and run the generated `KPA_Authorize.sh` from **Device → Root Script** in the handheld manager. Here, Root refers only to the storage-script capability provided by the handheld firmware; the application does not obtain general root access.
+| Edition | APK | Intended use |
+| --- | --- | --- |
+| Standard | `KPA-Tools-v1.0.4.apk` | Pegasus G setup, app installation, configuration import, and setup guides |
+| Root | `KPA-Tools-Root-v1.0.4.apk` | Everything in Standard, plus Root status and OTA maintenance |
 
-## Setup sequence
+Download the required APK from the [latest Release](https://github.com/tbc0309/KPA-Tools/releases/latest).
 
-1. Validate the selected source and clean the old configuration of selected applications.
-2. Install Pegasus G and import the KPA-specific configuration.
-3. Import the optional GBA bundle, then apply the final game lists.
-4. Install RetroArch, remove the old `retroarch.cfg`, and launch it. Resource versions are checked every 2 seconds for up to 60 seconds; setup continues after the initial resource extraction is confirmed.
-5. Install the remaining emulators and MT Manager.
-6. Apply Android directory overlays and verify each destination file. Missing files are copied again automatically.
+Source is maintained on two independent branches: the Standard edition is on [`main`](https://github.com/tbc0309/KPA-Tools/tree/main), and the Root edition is on [`root`](https://github.com/tbc0309/KPA-Tools/tree/root). GitHub opens the Standard `main` branch by default; switch to `root` for Root Manager and KPA Root Helper source.
 
-During setup, the app displays a full-screen progress page and keeps the screen awake. Buttons and step navigation are locked while execution is in progress. If a step fails, the result page is shown and the log is preserved.
+## Setup features
 
-## Usage
+KPA Tools detects the configuration source and optional GBA bundle, installs or updates Pegasus G, RetroArch, commonly used standalone emulators, and MT Manager, then imports configurations, game lists, and Android directory files in the required order.
 
-1. Download and install KPA Tools from the [latest Release](https://github.com/tbc0309/KPA-Tools/releases/latest).
-2. On first launch, grant file access and follow the on-screen instructions to run the storage Root authorization script.
-3. Prepare the configuration source folder. The GBA bundle is optional.
-4. Confirm the automatically detected source and the Roms storage location, then start setup.
-5. Review the result and use **Setup Guide** to finish the small number of manual controller and emulator settings.
+When a TF card is selected for games, only `Roms` and final game lists are written to it. Emulator settings, RetroArch, `Android/data`, and `pegasus-frontend` remain in internal storage. A TF card is not required.
 
-The result has three states: green means every verification passed; yellow means the main flow completed but an application or file needs attention; red means a critical step failed, such as Pegasus G, RetroArch, storage authorization, or source safety validation.
+### Basic usage
 
-## Interface
+1. Install KPA Tools and grant **All files access**.
+2. If Magisk is available, approve the full Root request. Without full Root, follow the app prompt and run `KPA_Authorize.sh` from the source package.
+3. On **Sources**, verify the detected source folder, optional GBA bundle, and game storage location.
+4. Select the applications and configurations you need, then start setup.
+5. Review the result and use **Setup Guide** for the remaining controller and emulator settings.
+
+The app keeps the screen awake during setup and verifies each installation and copy operation. Green means all checks passed, amber indicates an item that needs attention, and red marks a critical failure.
+
+## Latest interface
+
+The interface follows the system language. Press controller `Y` to switch between Chinese and English.
 
 | 1 Authorization | 2 Sources |
 | --- | --- |
 | ![Authorization](docs/screenshots/en/01-authorization.png) | ![Sources](docs/screenshots/en/02-sources.png) |
 
-| 3 Execution | About |
+| 3 Run | About |
 | --- | --- |
-| ![Execution](docs/screenshots/en/03-execution.png) | ![About](docs/screenshots/en/05-about.png) |
+| ![Run](docs/screenshots/en/03-execution.png) | ![About](docs/screenshots/en/05-about.png) |
 
-## Compatibility
+## Root edition extras
 
-- Package name: `com.imnks.kpatools`
-- Minimum Android version: Android 11 (API 30)
-- Target device: KONKR Pocket Advance, landscape 960 × 640
-- Device detection: KONKR Pocket Advance is shown only when `Build.MANUFACTURER=ARBOR`, `Build.MODEL=GT78-VN`, and `Build.DEVICE=GT78-VN` all match. Other devices show “Unknown device, use with caution!” but are not blocked from continuing.
+Root Manager is only for a KONKR Pocket Advance with an unlocked bootloader, Magisk installed, and full Root access granted. Open **About**, then tap **Root Manager** three times.
 
-## Important notes
+The first visit installs or updates **KPA Root Helper 1.0.0**. Restart when prompted, reopen Root Manager, and confirm that its status is `READY`. If Root was unavailable when the app was installed, obtain Root and open this page again to complete helper installation.
 
-- Setup removes the old configuration of selected applications and overwrites destination files without creating a backup.
-- After a successful import, the GBA bundle is renamed to `.zip.bak` to prevent Pegasus G from extracting it again on first launch.
-- Selecting the TF card changes only the location of `Roms` game content and game lists. Application configuration remains in internal storage.
-- If a regular emulator installation or a small number of non-critical file copies fail, processing continues and the final result summarizes the warnings.
+![Root Manager](docs/screenshots/root/root-manager-en.png)
+
+Stock boot images, patched images, backups, and OTA archives are stored in internal storage under `KPA-Tools/kpa_root_helper/`. When a TF card is present, opening Root Manager synchronizes a mirror; the feature works normally without a card. The helper includes a verified stock 0730 boot image and can reconstruct later stock images step by step from official incremental OTAs when needed.
+
+**Remove module with app** is enabled by default. Uninstalling the Root edition removes the helper when no operation is active while keeping existing backups.
+
+### Root OTA
+
+> Root OTA writes boot partitions. Keep the battery charged, and do not power off or force-restart during preparation, updating, or patching.
+
+1. Open Root Manager and confirm that KPA Root Helper reports `READY`.
+2. Tap **Prepare for OTA** three times and wait for the active slot to be restored to its matching stock boot.
+3. Follow the prompt to start the official system OTA. Do not restart yet.
+4. A flashing amber notice in the center of the screen means updating or patching is still active.
+5. Restart from System Update only after the notice turns green and explicitly says restart is allowed.
+6. After booting, reopen Root Manager and verify the firmware, Magisk, and helper status.
+
+An official line flash may temporarily leave equal A/B priorities in `misc`. OTA preparation trusts the slot currently running Android instead of rejecting this state. After the official OTA completes, the helper still verifies the scheduled target slot and checks boot hashes before and after writing.
+
+| Updating or patching: do not restart | Patch verified: restart allowed |
+| --- | --- |
+| ![Updating or patching](docs/screenshots/root/ota-updating-en.png) | ![Patch verified](docs/screenshots/root/ota-ready-en.png) |
+
+The same device completed two consecutive official incremental OTA updates, `0730 → 0813` and `0813 → 0828`. Both runs restored the source slot's stock boot, backed up and patched the target boot, verified the write-back hash, and confirmed the new system, active slot, and Root after restart. The old slot remained on its matching stock boot. Future OTA rules may change. If a red error notice appears, do not restart; inspect Root Manager and the logs first.
+
+## Compatibility and notes
+
+- Android 11 (API 30) or later; designed for the KONKR Pocket Advance at 960 × 640 landscape resolution.
+- Importing settings clears the selected app's old configuration and overwrites destination files. Installing an app alone preserves its settings.
+- After a successful import, the GBA bundle is renamed to `.zip.bak` to prevent Pegasus G from extracting it again.
+- Unrecognized hardware displays **Unknown device, use with caution**. Do not use Root write operations on unverified devices.
+- The Standard edition does not install or manage KPA Root Helper. Replacing Root with Standard does not automatically remove an installed helper.
 
 ## Copyright
 
-Copyright © 2026 我不是矿神. The project source code is released under the MIT License. Third-party applications, configurations, guides, and game content remain the property of their respective authors and rights holders. This repository does not distribute third-party APKs or game files.
+Copyright © 2026 我不是矿神. Source code is released under the MIT License. Third-party applications, configurations, guides, and game content remain the property of their respective authors and rights holders. This repository does not distribute third-party APKs or game files.
 
 - Website: [imnks.com](https://imnks.com/)
 - GitHub: [tbc0309/KPA-Tools](https://github.com/tbc0309/KPA-Tools)

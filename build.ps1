@@ -29,7 +29,15 @@ CheckExit
 & (Join-Path $Jdk 'bin\java.exe') -cp (Join-Path $tools 'lib\d8.jar') com.android.tools.r8.D8 --release --min-api 30 --lib $platform --output $dex (Join-Path $WorkDirectory 'classes.jar')
 CheckExit
 $buildManifest=Join-Path $PSScriptRoot 'AndroidManifest.xml'
-& (Join-Path $tools 'aapt.exe') package -f -M $buildManifest -S (Join-Path $PSScriptRoot 'res') -I $platform -A (Join-Path $PSScriptRoot 'assets') -F (Join-Path $WorkDirectory 'unsigned.apk')
+$moduleStage=Join-Path $WorkDirectory ('helper-'+$stamp)
+New-Item -ItemType Directory -Path $moduleStage | Out-Null
+Copy-Item -Path (Join-Path $PSScriptRoot 'helper-module\*') -Destination $moduleStage -Recurse
+Copy-Item -LiteralPath (Join-Path $dex 'classes.dex') -Destination (Join-Path $moduleStage 'stock-builder.dex')
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$moduleArchive=Join-Path $WorkDirectory ('helper-'+$stamp+'.zip')
+[IO.Compression.ZipFile]::CreateFromDirectory($moduleStage,$moduleArchive)
+Copy-Item -LiteralPath $moduleArchive -Destination (Join-Path $PSScriptRoot 'package-assets\KPA_Root_Helper.zip') -Force
+& (Join-Path $tools 'aapt.exe') package -f -M $buildManifest -S (Join-Path $PSScriptRoot 'res') -I $platform -A (Join-Path $PSScriptRoot 'package-assets') -F (Join-Path $WorkDirectory 'unsigned.apk')
 CheckExit
 Push-Location $dex
 try {& (Join-Path $tools 'aapt.exe') add (Join-Path $WorkDirectory 'unsigned.apk') classes.dex;CheckExit} finally {Pop-Location}

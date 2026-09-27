@@ -1,0 +1,5 @@
+payload-dumper-rust 0.8.4, Android aarch64
+https://github.com/rhythmcache/payload-dumper-rust
+https://github.com/rhythmcache/payload-dumper-rust/releases/tag/payload-dumper-rust-v0.8.4
+SHA256: c3712adddbe436d026be5c6b4cb7078f1d6ea5d5f3e532a95f2cb76edfbce7b2
+License: Apache-2.0; see PAYLOAD_LICENSE.txt.

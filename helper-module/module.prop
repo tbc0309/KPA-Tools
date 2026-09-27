@@ -1,0 +1,6 @@
+id=kpa_root_helper
+name=KPA Root Helper
+version=1.0.0
+versionCode=100
+author=IMNKS.COM
+description=Monitors KPA A/B OTA completion, patches the scheduled target boot, and preserves a stock fallback boot.
