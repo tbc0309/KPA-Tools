@@ -1,4 +1,5 @@
 build/
+build-*/
 *.apk
 *.idsig
 *.p12
@@ -6,3 +7,7 @@ build/
 .vscode/
 local.properties
 work/
+/KPA_Root_Helper_*.zip
+/boot-loop-test/
+/ota-rebuild-*/
+/retired-assets/
