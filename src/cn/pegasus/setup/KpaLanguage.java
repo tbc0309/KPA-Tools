@@ -47,7 +47,7 @@ final class KpaLanguage {
   put("文档和工具","Docs and Tools"); put("查看天马G设置教程，或管理 Root 与 OTA 备份。","View Pegasus G setup guides or manage Root and OTA backups."); put("Y · 语言","Y · Language");
   put("检测中","Checking"); put("监控中","Monitoring"); put("模块异常","Module Error"); put("模块未就绪","Module Pending"); put("Root 未授权","Root Required"); put("修补中","Patching"); put("待重启","Restart"); put("待确认","Check Needed");
   put("机型","Model"); put("固件","Firmware"); put("系统","System"); put("活动槽","Active Slot"); put("完整 Root","Full Root");
-  put("版本","Version"); put("监控状态","Monitoring"); put("OTA 目标槽","OTA Slot"); put("boot 哈希","Boot Hash"); put("0730 基准","0730 Baseline"); put("内部存储","Internal Storage"); put("TF 镜像","SD Card Backup");
+  put("版本","Version"); put("监控状态","Monitoring"); put("OTA 目标槽","OTA Slot"); put("boot 哈希","Boot Hash"); put("0730 基准","0730 Baseline"); put("内部存储","Internal Storage"); put("TF卡备份","SD Card Backup");
   put("正在检测完整 Root 与 KPA Root Helper 状态……","Checking Full Root and KPA Root Helper status…");
   put("KPA Root Helper 正在监控 A/B OTA","KPA Root Helper is monitoring A/B OTA");
   put("合成中","Rebuilding");put("正在从 OTA 合成原版 boot","Rebuilding stock boot from OTA");

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,7 +64,7 @@ public final class RootManagerActivity extends Activity {
         latest=snapshot;
         fill(statusPanel,"设备状态",new String[]{"机型","固件","系统","活动槽","完整 Root","Magisk"},snapshot.deviceRows());
         addRemovalOption(snapshot.rootGranted&&removalLoaded);
-        fill(helperPanel,"KPA Root Helper",new String[]{"版本","监控状态","OTA 目标槽","boot 哈希","0730 基准","内部存储","TF 镜像"},snapshot.helperRows());
+        fill(helperPanel,"KPA Root Helper",new String[]{"版本","监控状态","OTA 目标槽","boot 哈希","0730 基准","内部存储","TF卡备份"},snapshot.helperRows());
         if(!transientNotice){if(snapshot.helperReady)showMonitoring();else{notice.setText(tr(snapshot.rootGranted?"正在安装或更新 KPA Root Helper……":"获得完整 Root 授权后会自动安装 KPA Root Helper"));notice.setTextColor(0xffe5b567);}}
         if(snapshot.rootGranted&&!snapshot.helperReady&&!installStarted){installStarted=true;installHelper();}else if(snapshot.rootGranted&&snapshot.helperReady&&!syncStarted&&("READY".equals(snapshot.state)||"READY_TO_REBOOT".equals(snapshot.state)||"ERROR_STOCK_BUILD".equals(snapshot.state)||"ERROR_STORAGE".equals(snapshot.state)))synchronize();
         noticeHandler.removeCallbacks(refresh);
@@ -119,12 +120,13 @@ public final class RootManagerActivity extends Activity {
     private void showMonitoring(){if(notice!=null){String message=persistentError!=null?persistentError:latest!=null?tr(latest.summary()):tr("正在读取……");notice.setText(message);notice.setTextColor(persistentError!=null||latest!=null&&latest.state.startsWith("ERROR")?0xffff7777:0xff55d6be);}}
     private void showTransient(String message,int color){transientNotice=true;noticeHandler.removeCallbacks(clearNotice);notice.setText(message);notice.setTextColor(color);noticeHandler.postDelayed(clearNotice,5000);}
     private void copyValue(String key,String value){ClipboardManager clipboard=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);clipboard.setPrimaryClip(ClipData.newPlainText(tr(key),value));showTransient(tr("已复制：")+tr(key),0xff55d6be);}
-    private void fill(LinearLayout panel,String title,String[] keys,String[] values){panel.removeAllViews();heading(panel,title);for(int i=0;i<keys.length;i++){String value=values[i];int color=value.contains("未")||value.contains("拒绝")||value.contains("ERROR")?0xffff7777:0xff55d6be;row(panel,keys[i],value,color);}}
+    private void fill(LinearLayout panel,String title,String[] keys,String[] values){panel.removeAllViews();heading(panel,title);int labelWidth=labelWidth(keys);for(int i=0;i<keys.length;i++){String value=values[i];int color=value.contains("未")||value.contains("拒绝")||value.contains("ERROR")?0xffff7777:0xff55d6be;row(panel,keys[i],value,color,labelWidth);}}
     private LinearLayout card(String title){LinearLayout panel=verticalPanel(0xff17222d);panel.setPadding(dp(12),dp(8),dp(12),dp(8));panel.setBackground(background(0xff17222d));heading(panel,title);panel.addView(text("正在读取……",13,0xffe5b567));return panel;}
     private void addColumn(LinearLayout parent,View child,boolean right){LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,-1,1);params.setMargins(right?dp(5):0,dp(6),right?0:dp(5),dp(6));android.widget.ScrollView scroll=new android.widget.ScrollView(this);scroll.setFillViewport(true);scroll.addView(child);parent.addView(scroll,params);}
     private LinearLayout verticalPanel(int color){LinearLayout panel=new LinearLayout(this);panel.setOrientation(LinearLayout.VERTICAL);panel.setBackgroundColor(color);return panel;}
     private void heading(LinearLayout panel,String value){TextView view=text(value,18,Color.WHITE);view.setTypeface(null,1);panel.addView(view);}
-    private void row(LinearLayout panel,String key,String value,int color){LinearLayout line=new LinearLayout(this);line.addView(text(key,13,0xff9aa8b7),new LinearLayout.LayoutParams(dp(118),-2));TextView field=text(value,13,color);field.setSingleLine(true);field.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);field.setClickable(true);field.setFocusable(true);KpaTouchFeedback.apply(field);field.setOnClickListener(view->copyValue(key,value));line.addView(field,new LinearLayout.LayoutParams(0,-2,1));panel.addView(line);}
+    private int labelWidth(String[] keys){Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);paint.setTextSize(13*getResources().getDisplayMetrics().scaledDensity);float widest=0;for(String key:keys){widest=Math.max(widest,paint.measureText(key));widest=Math.max(widest,paint.measureText(KpaLanguage.english(key)));}return Math.max(dp(68),(int)Math.ceil(widest)+dp(14));}
+    private void row(LinearLayout panel,String key,String value,int color,int labelWidth){LinearLayout line=new LinearLayout(this);TextView label=text(key,13,0xff9aa8b7);label.setPadding(dp(10),dp(5),dp(4),dp(5));label.setSingleLine(true);line.addView(label,new LinearLayout.LayoutParams(labelWidth,-2));TextView field=text(value,13,color);field.setSingleLine(true);field.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);field.setClickable(true);field.setFocusable(true);KpaTouchFeedback.apply(field);field.setOnClickListener(view->copyValue(key,value));line.addView(field,new LinearLayout.LayoutParams(0,-2,1));panel.addView(line);}
     private TextView text(String value,int size,int color){TextView view=new TextView(this);view.setText(tr(value));view.setTextSize(size);view.setTextColor(color);view.setPadding(dp(10),dp(5),dp(10),dp(5));return view;}
     private String tr(String value){return KpaLanguage.text(this,value);}
     private void toggleLanguage(){KpaLanguage.toggle(this);recreate();}
