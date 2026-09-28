@@ -24,7 +24,7 @@ final class KpaLanguage {
   put("检测结果","Check results"); put("等待自动检测","Waiting for auto detection"); put("资料完整","Sources ready"); put("请补全标红项目","Complete highlighted items");
   put("调整选择","Adjust"); put("检测中","Checking"); put("补全资料","Complete"); put("应用选择","Apps"); put("覆盖资料","Overlays");
   put("准备执行","Ready to run"); put("执行结果","Result"); put("执行中","Running"); put("执行成功","Completed"); put("执行失败","Failed"); put("部分完成","Completed with warnings");
-  put("执行日志","Run log"); put("返回选择","Back to sources"); put("确认执行","Start"); put("查看结果","View result"); put("最终确认执行","Confirm initialization"); put("确认开始","Start now");
+  put("执行日志","Run log"); put("返回选择","Back to sources"); put("确认执行","Start"); put("再按2次执行","Tap 2 more times"); put("再按1次执行","Tap once more"); put("查看结果","View result"); put("最终确认执行","Confirm initialization"); put("确认开始","Start now");
   put("天马G 文档","Pegasus G Docs"); put("设置教程","Setup guides"); put("手柄配置教程","Controller Guide"); put("模拟器设置教程","Emulator Guide"); put("构建 ","Build ");
   put("Root 管理","Root Manager"); put("状态","Status"); put("设备状态","Device Status");
   put("文档和工具","Docs and Tools"); put("查看天马G设置教程，或管理 Root 与 OTA 备份。","View Pegasus G setup guides or manage Root and OTA backups."); put("Y · 语言","Y · Language");
